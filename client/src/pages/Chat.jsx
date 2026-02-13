@@ -60,6 +60,12 @@ export default function Chat() {
     setInput("");
 
     const userMsg = { id: nowId(), role: "user", text: userText };
+
+    const history = [...messages, userMsg]
+      .filter((m) => !m.loading)
+      .slice(-12)
+      .map((m) => ({ role: m.role, content: m.text }));
+
     setMessages((prev) => [...prev, userMsg]);
     scrollToBottom();
 
@@ -72,7 +78,7 @@ export default function Chat() {
 
     setBusy(true);
     try {
-      const res = await fetch(`${API_BASE}/api/chat`, {
+      const res = await fetch(`${API_BASE}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -80,10 +86,7 @@ export default function Chat() {
           topic,
           level,
           message: userText,
-          history: messages
-            .filter((m) => !m.loading)
-            .slice(-12)
-            .map((m) => ({ role: m.role, content: m.text })),
+          history,
         }),
       });
 
@@ -99,7 +102,8 @@ export default function Chat() {
         )
       );
       scrollToBottom();
-    } catch (e) {
+    } catch {
+      // ✅ FIX: no error variable at all
       setMessages((prev) =>
         prev.map((m) =>
           m.id === loadingId
@@ -127,7 +131,9 @@ export default function Chat() {
   return (
     <div className="space-y-3">
       <div className="rounded-3xl bg-white/80 shadow-soft ring-1 ring-[var(--ring)] p-4">
-        <div className="text-sm font-extrabold text-slate-900">Encouragement + prayer + next step.</div>
+        <div className="text-sm font-extrabold text-slate-900">
+          Encouragement + prayer + next step.
+        </div>
 
         <div className="mt-3 grid grid-cols-1 gap-2">
           <input
@@ -166,18 +172,13 @@ export default function Chat() {
       </div>
 
       <div className="rounded-3xl bg-white/80 shadow-soft ring-1 ring-[var(--ring)] p-4">
-        <div
-          ref={listRef}
-          className="h-[52vh] overflow-y-auto pr-1 space-y-3"
-        >
+        <div ref={listRef} className="h-[52vh] overflow-y-auto pr-1 space-y-3">
           {messages.map((m) => (
             <div
               key={m.id}
               className={[
                 "max-w-[85%] rounded-3xl px-4 py-3 text-sm font-semibold ring-1 ring-[var(--ring)]",
-                m.role === "user"
-                  ? "ml-auto bg-white"
-                  : "mr-auto bg-white/70",
+                m.role === "user" ? "ml-auto bg-white" : "mr-auto bg-white/70",
               ].join(" ")}
             >
               {m.text}

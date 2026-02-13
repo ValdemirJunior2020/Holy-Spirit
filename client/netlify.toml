@@ -1,0 +1,10 @@
+# netlify.toml
+[build]
+  command = "npm run build"
+  publish = "dist" # use "build" if CRA
+
+[[redirects]]
+  from = "/api/*"
+  to = "https://YOUR-RENDER-APP.onrender.com/:splat"
+  status = 200
+  force = true
