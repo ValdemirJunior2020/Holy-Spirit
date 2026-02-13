@@ -78,7 +78,8 @@ export default function Chat() {
 
     setBusy(true);
     try {
-      const res = await fetch(`${API_BASE}/chat`, {
+      const res = await await fetch(`/api/chat`, {
+
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

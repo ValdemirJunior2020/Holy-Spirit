@@ -1,20 +1,29 @@
-// client/src/utils/apiBase.js
+export const API_BASE = (
+  import.meta.env.VITE_API_BASE ||
+  "http://localhost:5050"
+).replace(/\/+$/, "");
 
-const API_BASE = (import.meta.env.VITE_API_BASE || "").replace(/\/$/, "") || "http://localhost:5050";
+export async function postJSON(path, body, init = {}) {
+  const url = `${API_BASE}${path.startsWith("/") ? "" : "/"}${path}`;
 
-export { API_BASE };
-
-export async function sendChat(payload) {
-  const res = await fetch(`${API_BASE}/chat`, {
+  const res = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    headers: { "Content-Type": "application/json", ...(init.headers || {}) },
+    body: JSON.stringify(body),
+    ...init,
   });
 
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(`API ${res.status}: ${text || res.statusText}`);
+  const text = await res.text().catch(() => "");
+  let data = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    // non-json response
   }
 
-  return res.json();
+  if (!res.ok || data?.ok === false) {
+    throw new Error(data?.error || `HTTP ${res.status}: ${text || res.statusText}`);
+  }
+
+  return data;
 }
