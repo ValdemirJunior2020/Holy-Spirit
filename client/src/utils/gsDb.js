@@ -1,46 +1,45 @@
 // client/src/utils/gsDb.js
-const GAS_URL = (import.meta.env.VITE_GAS_WEBAPP_URL || "").trim();
+const FALLBACK_GAS_WEBAPP_URL =
+  "https://script.google.com/macros/s/AKfycbwn4UYpP6O5_t1V0oATKFTHom3xYtH7aaUFVpdnPGbJk-Ap1lxP5wdMZWIE1CF8AB3H/exec";
 
-async function parseJson(res) {
-  const text = await res.text();
-  try {
-    return text ? JSON.parse(text) : null;
-  } catch {
-    return { ok: false, error: text || "Invalid JSON" };
-  }
-}
+export const GAS_WEBAPP_URL =
+  String(import.meta.env.VITE_GAS_WEBAPP_URL || "")
+    .trim()
+    .replace(/\/+$/, "") || FALLBACK_GAS_WEBAPP_URL;
 
-function ensureGas() {
-  if (!GAS_URL) throw new Error("Missing VITE_GAS_WEBAPP_URL");
-}
+async function gasGet(action, params = {}) {
+  const url = new URL(GAS_WEBAPP_URL);
+  url.searchParams.set("action", action);
+  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, String(v)));
 
-export async function listReviews(limit = 50) {
-  ensureGas();
-  const url = `${GAS_URL}?action=reviews&limit=${encodeURIComponent(limit)}`;
-  const res = await fetch(url);
-  const data = await parseJson(res);
-  if (!data?.ok) throw new Error(data?.error || "Failed to load reviews");
-  return data.reviews || [];
-}
-
-export async function addReview({ name, rating, message }) {
-  ensureGas();
-  const res = await fetch(GAS_URL, {
-    method: "POST",
-    // keep request “simple” for browsers; GAS reads postData.contents the same
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify({ action: "review_add", name, rating, message }),
-  });
-  const data = await parseJson(res);
-  if (!data?.ok) throw new Error(data?.error || "Failed to add review");
+  const res = await fetch(url.toString(), { method: "GET", cache: "no-store" });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data?.ok === false) throw new Error(data?.error || "GAS request failed");
   return data;
 }
 
-export async function listPartners(limit = 50) {
-  ensureGas();
-  const url = `${GAS_URL}?action=partners&limit=${encodeURIComponent(limit)}`;
-  const res = await fetch(url);
-  const data = await parseJson(res);
-  if (!data?.ok) throw new Error(data?.error || "Failed to load partners");
-  return data.partners || [];
+async function gasPost(body) {
+  const res = await fetch(GAS_WEBAPP_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(body),
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data?.ok === false) throw new Error(data?.error || "GAS request failed");
+  return data;
+}
+
+export async function listReviews(limit = 50) {
+  const data = await gasGet("reviews", { limit });
+  return Array.isArray(data?.reviews) ? data.reviews : [];
+}
+
+export async function addReview({ name, rating, message }) {
+  return gasPost({
+    action: "review_add",
+    name: String(name || "").trim(),
+    rating: Number(rating || 0),
+    message: String(message || "").trim(),
+  });
 }
