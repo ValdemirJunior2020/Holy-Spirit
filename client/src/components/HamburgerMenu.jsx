@@ -2,7 +2,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 
-const DONATE_URL = "https://example.com/donate"; // <-- replace with your real donate link
+const DONATE_URL = "https://www.paypal.com/donate/?hosted_button_id=DSB9NYQC8C7CQ";
 
 function Item({ to, children, onClick }) {
   return (
@@ -31,22 +31,21 @@ export default function HamburgerMenu({ open, onClose }) {
         onClick={onClose}
       />
       <div className="absolute inset-0 flex justify-center items-start pt-16 px-4">
-        <div className="w-full max-w-md rounded-3xl bg-white/90 backdrop-blur shadow-soft ring-1 ring-[var(--ring)] p-4">
+        <div className="w-full max-w-5xl sm:max-w-md rounded-3xl bg-white/90 backdrop-blur shadow-soft ring-1 ring-[var(--ring)] p-4">
           <div className="flex items-center justify-between">
             <div className="text-sm font-extrabold text-slate-900">Menu</div>
             <button
               onClick={onClose}
               className="h-10 w-10 grid place-items-center rounded-2xl bg-white shadow-soft ring-1 ring-[var(--ring)]"
               aria-label="Close menu"
+              title="Close"
             >
               ✕
             </button>
           </div>
 
+          {/* Put the “rest” here */}
           <div className="mt-4 space-y-2">
-            <Item to="/" onClick={onClose}>🏠 Home</Item>
-            <Item to="/chat" onClick={onClose}>💬 AI Chat</Item>
-           <Item to="/reviews" onClick={onClose}>⭐ Reviews</Item>
             <Item to="/partners" onClick={onClose}>⛪ Church Partners</Item>
             <Item to="/gallery" onClick={onClose}>🖼️ Gallery</Item>
             <Item to="/prayer-wall" onClick={onClose}>🙏 Prayer Wall</Item>
@@ -58,7 +57,7 @@ export default function HamburgerMenu({ open, onClose }) {
               rel="noreferrer"
               className="block rounded-2xl px-4 py-3 text-sm font-extrabold text-center bg-white shadow-soft ring-1 ring-[var(--ring)]"
             >
-              ❤️ Donate
+              ❤️ Donate (PayPal)
             </a>
           </div>
 
