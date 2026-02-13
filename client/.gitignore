@@ -1,0 +1,54 @@
+# .gitignore (Node + React/Vite + logs + env)
+
+# dependencies
+node_modules/
+
+# build outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+coverage/
+
+# local env files
+.env
+.env.*
+!.env.example
+
+# logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# cache
+.cache/
+.eslintcache
+*.tsbuildinfo
+
+# Vite / CRA
+.vite/
+
+# Firebase (if used later)
+.firebase/
+firebase-debug.log*
+
+# Netlify
+.netlify/

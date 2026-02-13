@@ -1,0 +1,27 @@
+/* // client/src/styles/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #ffffff;
+  --panel: #fbfbfb;
+  --panel2: #f4f6f8;
+  --text: #0f172a;
+  --muted: #64748b;
+  --ring: rgba(15, 23, 42, 0.10);
+}
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1200px 500px at 50% -10%, rgba(2, 132, 199, 0.08), transparent 55%),
+    radial-gradient(900px 400px at 90% 0%, rgba(34, 197, 94, 0.08), transparent 60%),
+    var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+}
+
+a { text-decoration: none; }
