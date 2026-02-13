@@ -1,5 +1,5 @@
 // client/src/utils/analytics.js
-const API_BASE = import.meta.env.PROD ? "" : "http://localhost:5050";
+import { API_BASE } from "./apiBase.js";
 
 function getVisitorId() {
   const key = "ahs_vid";

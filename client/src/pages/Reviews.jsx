@@ -1,7 +1,6 @@
 // client/src/pages/Reviews.jsx
 import React, { useEffect, useMemo, useState } from "react";
-
-const API_BASE = import.meta.env.PROD ? "" : "http://localhost:5050";
+import { API_BASE } from "../utils/apiBase.js";
 
 function Stars({ value }) {
   const v = Math.max(0, Math.min(5, Number(value || 0)));
@@ -66,7 +65,7 @@ export default function Reviews() {
         await fetchReviews();
       }
     } catch {
-      setStatus("Server not reachable.");
+      setStatus("Server not reachable right now. Try again in a moment. 🙏");
     } finally {
       setBusy(false);
     }
