@@ -1,28 +1,28 @@
-export const API_BASE = (
-  import.meta.env.VITE_API_BASE ||
-  "http://localhost:5050"
-).replace(/\/+$/, "");
+export const API_BASE =
+  (import.meta.env.VITE_API_BASE || "").replace(/\/$/, "") ||
+  (window.location.hostname === "localhost" ? "http://localhost:5050" : "");
 
-export async function postJSON(path, body, init = {}) {
-  const url = `${API_BASE}${path.startsWith("/") ? "" : "/"}${path}`;
-
-  const res = await fetch(url, {
+// optional helper (use it or delete it)
+export async function sendChat(payload) {
+  const res = await fetch(`${API_BASE}/api/chat`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", ...(init.headers || {}) },
-    body: JSON.stringify(body),
-    ...init,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
   });
 
-  const text = await res.text().catch(() => "");
+  const raw = await res.text();
+
   let data = {};
-  try {
-    data = text ? JSON.parse(text) : {};
-  } catch {
-    // non-json response
+  if (raw) {
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      throw new Error(`Invalid JSON from server: ${raw.slice(0, 180)}`);
+    }
   }
 
-  if (!res.ok || data?.ok === false) {
-    throw new Error(data?.error || `HTTP ${res.status}: ${text || res.statusText}`);
+  if (!res.ok) {
+    throw new Error(data?.error || raw || `HTTP ${res.status}`);
   }
 
   return data;

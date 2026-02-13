@@ -1,4 +1,3 @@
-// client/src/pages/Chat.jsx
 import React, { useMemo, useRef, useState } from "react";
 import { API_BASE } from "../utils/apiBase.js";
 
@@ -42,7 +41,6 @@ export default function Chat() {
   ]);
 
   const listRef = useRef(null);
-
   const canSend = useMemo(() => input.trim().length > 0 && !busy, [input, busy]);
 
   function scrollToBottom() {
@@ -60,12 +58,6 @@ export default function Chat() {
     setInput("");
 
     const userMsg = { id: nowId(), role: "user", text: userText };
-
-    const history = [...messages, userMsg]
-      .filter((m) => !m.loading)
-      .slice(-12)
-      .map((m) => ({ role: m.role, content: m.text }));
-
     setMessages((prev) => [...prev, userMsg]);
     scrollToBottom();
 
@@ -78,8 +70,7 @@ export default function Chat() {
 
     setBusy(true);
     try {
-      const res = await await fetch(`/api/chat`, {
-
+      const res = await fetch(`${API_BASE}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -87,7 +78,10 @@ export default function Chat() {
           topic,
           level,
           message: userText,
-          history,
+          history: [...messages, userMsg]
+            .filter((m) => !m.loading)
+            .slice(-12)
+            .map((m) => ({ role: m.role, content: m.text })),
         }),
       });
 
@@ -104,7 +98,6 @@ export default function Chat() {
       );
       scrollToBottom();
     } catch {
-      // ✅ FIX: no error variable at all
       setMessages((prev) =>
         prev.map((m) =>
           m.id === loadingId
@@ -178,7 +171,7 @@ export default function Chat() {
             <div
               key={m.id}
               className={[
-                "max-w-[85%] rounded-3xl px-4 py-3 text-sm font-semibold ring-1 ring-[var(--ring)]",
+                "max-w-[85%] rounded-3xl px-4 py-3 text-sm font-semibold ring-1 ring-[var(--ring)] whitespace-pre-wrap",
                 m.role === "user" ? "ml-auto bg-white" : "mr-auto bg-white/70",
               ].join(" ")}
             >

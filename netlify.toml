@@ -1,5 +1,19 @@
+# netlify.toml (ROOT of repo)
+# ✅ Monorepo deploy: build + publish the Vite app in /client
+[build]
+  base = "client"
+  command = "npm run build"
+  publish = "dist"
+
+# ✅ Proxy API calls from Netlify -> Render (no CORS pain)
 [[redirects]]
   from = "/api/*"
   to = "https://holy-spirit.onrender.com/api/:splat"
   status = 200
   force = true
+
+# ✅ Fix "Page not found" on refresh / deep links (React Router / SPA)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
