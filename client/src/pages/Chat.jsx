@@ -1,5 +1,6 @@
+// client/src/pages/Chat.jsx
 import React, { useMemo, useRef, useState } from "react";
-import { API_BASE } from "../utils/apiBase.js";
+import { postJSON } from "../utils/apiBase.js";
 
 const TOPICS = [
   "Peace / Anxiety",
@@ -25,7 +26,7 @@ function nowId() {
   return `${Date.now()}_${Math.random().toString(16).slice(2)}`;
 }
 
-export default function Chat() {
+export default function ChatPage() {
   const [name, setName] = useState("junior");
   const [topic, setTopic] = useState(TOPICS[0]);
   const [level, setLevel] = useState(3);
@@ -62,50 +63,29 @@ export default function Chat() {
     scrollToBottom();
 
     const loadingId = nowId();
-    setMessages((prev) => [
-      ...prev,
-      { id: loadingId, role: "assistant", text: "One moment… 🙏", loading: true },
-    ]);
+    setMessages((prev) => [...prev, { id: loadingId, role: "assistant", text: "One moment… 🙏", loading: true }]);
     scrollToBottom();
 
     setBusy(true);
+
     try {
-      const res = await fetch(`${API_BASE}/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          topic,
-          level,
-          message: userText,
-          history: [...messages, userMsg]
-            .filter((m) => !m.loading)
-            .slice(-12)
-            .map((m) => ({ role: m.role, content: m.text })),
-        }),
-      });
+      const history = [...messages, userMsg]
+        .filter((m) => !m.loading)
+        .slice(-12)
+        .map((m) => ({ role: m.role, content: m.text }));
 
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok || data?.ok === false) {
-        throw new Error(data?.error || `HTTP ${res.status}`);
-      }
+      const data = await postJSON("/api/chat", { name, topic, level, message: userText, history });
 
       setMessages((prev) =>
-        prev.map((m) =>
-          m.id === loadingId ? { ...m, loading: false, text: data.reply || "🙏" } : m
-        )
+        prev.map((m) => (m.id === loadingId ? { ...m, loading: false, text: data?.reply || "🙏" } : m))
       );
       scrollToBottom();
-    } catch {
+    } catch (err) {
+      void err;
       setMessages((prev) =>
         prev.map((m) =>
           m.id === loadingId
-            ? {
-                ...m,
-                loading: false,
-                text: "Server not reachable right now. Try again in a moment. 🙏",
-              }
+            ? { ...m, loading: false, text: "Server not reachable right now. Try again in a moment. 🙏" }
             : m
         )
       );
@@ -125,9 +105,7 @@ export default function Chat() {
   return (
     <div className="space-y-3">
       <div className="rounded-3xl bg-white/80 shadow-soft ring-1 ring-[var(--ring)] p-4">
-        <div className="text-sm font-extrabold text-slate-900">
-          Encouragement + prayer + next step.
-        </div>
+        <div className="text-sm font-extrabold text-slate-900">Encouragement + prayer + next step.</div>
 
         <div className="mt-3 grid grid-cols-1 gap-2">
           <input
@@ -171,7 +149,7 @@ export default function Chat() {
             <div
               key={m.id}
               className={[
-                "max-w-[85%] rounded-3xl px-4 py-3 text-sm font-semibold ring-1 ring-[var(--ring)] whitespace-pre-wrap",
+                "max-w-[85%] rounded-3xl px-4 py-3 text-sm font-semibold ring-1 ring-[var(--ring)]",
                 m.role === "user" ? "ml-auto bg-white" : "mr-auto bg-white/70",
               ].join(" ")}
             >

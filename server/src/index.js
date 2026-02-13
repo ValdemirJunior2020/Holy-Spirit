@@ -9,6 +9,7 @@ dotenv.config();
 const app = express();
 app.use(express.json({ limit: "2mb" }));
 
+// If you still ever call Render directly (not via Netlify proxy), set CLIENT_ORIGIN to your Netlify URL.
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 
 app.use(
@@ -19,17 +20,10 @@ app.use(
   })
 );
 
+// Keep both so you can test easily with Netlify's /api/* redirect
 app.get("/health", (req, res) => res.json({ ok: true }));
+app.get("/api/health", (req, res) => res.json({ ok: true }));
 
-// === Reviews (placeholder routes if you already have them, keep yours) ===
-app.get("/api/reviews", async (req, res) => {
-  res.json({ ok: true, reviews: [] });
-});
-app.post("/api/reviews/add", async (req, res) => {
-  res.json({ ok: true });
-});
-
-// === AI Chat ===
 app.post("/api/chat", async (req, res) => {
   try {
     const { name, topic, level, message, history } = req.body || {};
