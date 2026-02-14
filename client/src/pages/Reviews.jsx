@@ -2,8 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { addReview, listReviews } from "../utils/gsDb.js";
-
-const DONATE_URL = "https://www.paypal.com/donate/?hosted_button_id=DSB9NYQC8C7CQ";
+import DonateModal from "../components/DonateModal.jsx"; // 1. Import Modal
 
 function StarsRow({ value }) {
   const v = Math.max(0, Math.min(5, Number(value || 0)));
@@ -19,8 +18,8 @@ function StarsRow({ value }) {
 }
 
 export default function Reviews() {
-  const [name, setName] = useState(""); // Changed default to empty for cleaner UX
-  const [phone, setPhone] = useState(""); // ✅ NEW: Phone State
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [rating, setRating] = useState(5);
   const [message, setMessage] = useState("");
 
@@ -28,6 +27,8 @@ export default function Reviews() {
   const [status, setStatus] = useState("");
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  const [showDonate, setShowDonate] = useState(false); // 2. Modal State
 
   const shownCount = list.length;
 
@@ -54,16 +55,13 @@ export default function Reviews() {
   async function onSubmit(e) {
     e.preventDefault();
     setStatus("");
-
     const msg = String(message || "").trim();
     if (!msg) {
       setStatus("Please write your review message.");
       return;
     }
-
     setBusy(true);
     try {
-      // ✅ NEW: Sending 'phone' to the backend
       await addReview({ name, phone, rating, message: msg });
       setMessage("");
       setRating(5);
@@ -78,7 +76,6 @@ export default function Reviews() {
 
   useEffect(() => {
     refresh();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -94,14 +91,13 @@ export default function Reviews() {
         </div>
 
         <div className="mt-3 flex flex-col sm:flex-row gap-2">
-          <a
-            href={DONATE_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center justify-center rounded-3xl px-4 py-3 text-sm font-extrabold bg-white shadow-soft ring-1 ring-[var(--ring)] active:scale-[0.99]"
+          {/* 3. Button triggers modal */}
+          <button
+            onClick={() => setShowDonate(true)}
+            className="inline-flex items-center justify-center rounded-3xl px-4 py-3 text-sm font-extrabold bg-white shadow-soft ring-1 ring-[var(--ring)] active:scale-[0.99] text-slate-900"
           >
-            Support / Donate (PayPal)
-          </a>
+            Support / Donate
+          </button>
 
           <Link
             to="/partners"
@@ -121,8 +117,6 @@ export default function Reviews() {
         <div className="text-sm font-extrabold text-slate-900">Leave a Review</div>
 
         <div className="mt-3 grid grid-cols-1 gap-3">
-          
-          {/* ✅ NEW: Name and Phone side-by-side */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <input
               value={name}
@@ -216,6 +210,9 @@ export default function Reviews() {
           </div>
         )}
       </div>
+
+      {/* 4. Render Modal */}
+      {showDonate && <DonateModal onClose={() => setShowDonate(false)} />}
     </div>
   );
 }
