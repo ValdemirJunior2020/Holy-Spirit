@@ -1,4 +1,3 @@
-// client/src/App.jsx
 import React, { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import TopBar from "./components/TopBar.jsx";
@@ -14,11 +13,36 @@ import Profile from "./pages/Profile.jsx";
 
 import { trackPageView } from "./utils/analytics.js";
 
+// Define your API URL here (Use your Render URL in production, localhost in dev)
+// If you have an environment variable set up, use import.meta.env.VITE_API_URL
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5050";
+
 export default function App() {
   const location = useLocation();
 
   useEffect(() => {
+    // 1. Keep your existing analytics
     trackPageView(location.pathname);
+
+    // 2. NEW: Track visitor count via your Google Sheet
+    const logVisit = async () => {
+      try {
+        await fetch(`${API_URL}/api/visit`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            page: location.pathname,
+          }),
+        });
+      } catch (error) {
+        // Silently fail if tracking errors, so it doesn't break the app for the user
+        console.error("Tracking failed:", error);
+      }
+    };
+
+    logVisit();
   }, [location.pathname]);
 
   return (

@@ -1,6 +1,7 @@
 // client/src/components/HamburgerMenu.jsx
 import React from "react";
 import { NavLink } from "react-router-dom";
+import SocialIcons from "./SocialIcons.jsx"; // ✅ Imported SocialIcons
 
 const DONATE_URL = "https://www.paypal.com/donate/?hosted_button_id=DSB9NYQC8C7CQ";
 
@@ -44,7 +45,6 @@ export default function HamburgerMenu({ open, onClose }) {
             </button>
           </div>
 
-          {/* Put the “rest” here */}
           <div className="mt-4 space-y-2">
             <Item to="/partners" onClick={onClose}>⛪ Church Partners</Item>
             <Item to="/gallery" onClick={onClose}>🖼️ Gallery</Item>
@@ -61,7 +61,12 @@ export default function HamburgerMenu({ open, onClose }) {
             </a>
           </div>
 
-          <div className="mt-4 rounded-2xl bg-[var(--panel2)] p-4 ring-1 ring-[var(--ring)] text-xs text-slate-600">
+          {/* ✅ Social Icons added here so they are accessible from menu */}
+          <div className="mt-4 flex justify-center pb-2">
+            <SocialIcons />
+          </div>
+
+          <div className="mt-2 rounded-2xl bg-[var(--panel2)] p-4 ring-1 ring-[var(--ring)] text-xs text-slate-600">
             <div className="font-extrabold text-slate-800">Quick note</div>
             <div className="mt-1">
               This is spiritual encouragement. If you’re in danger or need urgent help, call local emergency services.

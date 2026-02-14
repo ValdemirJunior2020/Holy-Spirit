@@ -122,3 +122,20 @@ svg {
     min-width: 44px;
   }
 }
+
+/* client/src/styles/globals.css */
+
+/* Bigger logo in TopBar (both desktop + mobile) */
+.ahs-topbar-logo {
+  height: 64px;            /* desktop/tablet */
+  max-width: min(520px, 92vw);
+  width: auto;
+  object-fit: contain;
+}
+
+@media (max-width: 640px) {
+  .ahs-topbar-logo {
+    height: 54px;          /* phones */
+    max-width: 92vw;
+  }
+}
