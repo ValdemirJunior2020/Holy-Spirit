@@ -19,7 +19,8 @@ function StarsRow({ value }) {
 }
 
 export default function Reviews() {
-  const [name, setName] = useState("Junior");
+  const [name, setName] = useState(""); // Changed default to empty for cleaner UX
+  const [phone, setPhone] = useState(""); // ✅ NEW: Phone State
   const [rating, setRating] = useState(5);
   const [message, setMessage] = useState("");
 
@@ -62,7 +63,8 @@ export default function Reviews() {
 
     setBusy(true);
     try {
-      await addReview({ name, rating, message: msg });
+      // ✅ NEW: Sending 'phone' to the backend
+      await addReview({ name, phone, rating, message: msg });
       setMessage("");
       setRating(5);
       setStatus("Thank you! ✅ Your review was saved.");
@@ -119,12 +121,23 @@ export default function Reviews() {
         <div className="text-sm font-extrabold text-slate-900">Leave a Review</div>
 
         <div className="mt-3 grid grid-cols-1 gap-3">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your name (optional)"
-            className="w-full rounded-2xl bg-white px-4 py-3 text-sm ring-1 ring-[var(--ring)] focus:outline-none"
-          />
+          
+          {/* ✅ NEW: Name and Phone side-by-side */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your Name (optional)"
+              className="w-full rounded-2xl bg-white px-4 py-3 text-sm ring-1 ring-[var(--ring)] focus:outline-none"
+            />
+            <input
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Phone "
+              type="tel"
+              className="w-full rounded-2xl bg-white px-4 py-3 text-sm ring-1 ring-[var(--ring)] focus:outline-none"
+            />
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="rounded-2xl bg-white px-4 py-3 ring-1 ring-[var(--ring)] flex items-center justify-between">
