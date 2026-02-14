@@ -51,8 +51,8 @@ export default function TopBar() {
 
   const handleShare = async () => {
     const shareData = {
-      title: "Adventure With The Holy Spirit",
-      text: "Check out this 24/7 Prayer Companion!",
+      title: "AHS Ministry - Prayer Companion",
+      text: "Adventure with the Holy Spirit: 24/7 Prayer Support.",
       url: window.location.origin,
     };
     if (navigator.share) {
@@ -80,22 +80,33 @@ export default function TopBar() {
 
             <HamburgerMenu open={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
-            {/* ✅ UPDATED: Removed Name & Flame. Only the Counter remains. */}
+            {/* Counter Badge */}
             <div className="flex items-center gap-1.5 text-xs font-extrabold text-green-700 bg-green-50 px-3 py-1.5 rounded-full shadow-sm ring-1 ring-green-100">
               <Users size={12} className="text-green-600" />
               <span>{visitorCount.toLocaleString()} prayed</span>
             </div>
           </div>
 
-          {/* CENTER: Logo (Hidden on Mobile) */}
-          <div className="hidden sm:flex justify-center">
+          {/* CENTER: Logo + New Ministry Text (Desktop) */}
+          <div className="hidden sm:flex flex-col items-center justify-center">
+            {/* The Logo Image */}
             <img
               src={LOGO_SRC}
-              alt="Adventure with the Holy Spirit"
+              alt="AHS Ministry"
               draggable={false}
               loading="eager"
-              className="object-contain rounded-2xl bg-white/60 ring-1 ring-[var(--ring)] shadow-soft px-2 py-1 h-28 sm:h-36 md:h-44 max-w-[92vw] sm:max-w-[600px] md:max-w-[800px]"
+              className="object-contain rounded-2xl bg-white/60 ring-1 ring-[var(--ring)] shadow-soft px-2 py-1 h-24 md:h-32 max-w-[500px]"
             />
+            
+            {/* ✅ NEW: Ministry Text Below Logo */}
+            <div className="mt-2 text-center">
+              <div className="text-xl font-black text-slate-900 tracking-tight leading-none font-serif">
+                AHS MINISTRY
+              </div>
+              <div className="text-xs font-bold text-amber-600 uppercase tracking-widest mt-0.5">
+                Adventure with the Holy Spirit
+              </div>
+            </div>
           </div>
 
           {/* RIGHT: Share Button & Desktop Socials */}
@@ -123,15 +134,24 @@ export default function TopBar() {
           </div>
         </div>
 
-        {/* MOBILE ONLY: Logo Row */}
-        <div className="mt-3 flex justify-center sm:hidden">
+        {/* MOBILE ONLY: Logo + Text Row */}
+        <div className="mt-3 flex flex-col items-center justify-center sm:hidden">
           <img
             src={LOGO_SRC}
-            alt="Adventure with the Holy Spirit"
+            alt="AHS Ministry"
             draggable={false}
             loading="eager"
             className="object-contain rounded-2xl bg-white/60 ring-1 ring-[var(--ring)] shadow-soft px-2 py-1 h-20 max-w-[95vw]"
           />
+          {/* ✅ NEW: Mobile Text */}
+          <div className="mt-2 text-center">
+            <div className="text-lg font-black text-slate-900 leading-none font-serif">
+              AHS MINISTRY
+            </div>
+            <div className="text-[10px] font-bold text-amber-600 uppercase tracking-widest mt-0.5">
+              Adventure with the Holy Spirit
+            </div>
+          </div>
         </div>
 
         {/* MOBILE ONLY: Social Icons Row (Hidden on Home) */}
